@@ -256,11 +256,20 @@ async function refresh(){
 }
 setInterval(refresh, 2000); refresh();
 
+let lastUrgentIds = [];
+let focusedReplyId = null;
+function rememberFocus(e) {
+  focusedReplyId = e.target.id;
+}
 async function loadUrgent(){
   const box = document.getElementById('urgentList');
   try{
     const r = await fetch('/urgent'); const j = await r.json();
     const urgent = j.urgent;
+    // Only re-render if the urgent list changed (by id or reply)
+    const ids = urgent.map(m => m.id + (m.reply ? m.reply.text : ''));
+    if (JSON.stringify(ids) === JSON.stringify(lastUrgentIds) && focusedReplyId && document.activeElement && document.activeElement.id === focusedReplyId) return;
+    lastUrgentIds = ids;
     if (!urgent.length) {
       box.innerHTML = '<div style="color:#888;">No urgent messages</div>';
       return;
@@ -281,12 +290,17 @@ async function loadUrgent(){
             <button class="btn" onclick="quickReply(${m.id},'I will call you')">I will call you</button>
           </div>
           <div class="replyrow">
-            <input class="input" id="reply-${m.id}" autocomplete="off" placeholder="Custom reply…">
+            <input class="input" id="reply-${m.id}" autocomplete="off" placeholder="Custom reply…" onfocus="rememberFocus(event)">
             <button class="btn" onclick="sendTextReply(${m.id})">Send</button>
           </div>
         </div>
       </div>
     `).join('');
+    // Restore focus if needed
+    if (focusedReplyId) {
+      const input = document.getElementById(focusedReplyId);
+      if (input) input.focus();
+    }
   }catch(e){ box.innerHTML = '<div style="color:#888;">Error loading urgent messages</div>'; }
 }
 function quickReply(id, text){
@@ -294,7 +308,7 @@ function quickReply(id, text){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({id, text})
-  }).then(loadUrgent);
+  }).then(()=>{ lastUrgentIds = []; loadUrgent(); });
 }
 function sendTextReply(id){
   const input = document.getElementById('reply-'+id);
@@ -304,7 +318,7 @@ function sendTextReply(id){
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({id, text})
-  }).then(()=>{ input.value=''; loadUrgent(); });
+  }).then(()=>{ input.value=''; lastUrgentIds = []; loadUrgent(); });
 }
 setInterval(loadUrgent, 2000); loadUrgent();
 </script>
