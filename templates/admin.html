@@ -137,15 +137,24 @@ h1 {
   <div class="card">
     <h1>Principal Kiosk — Admin</h1>
     <div class="row">
-      <button class="btn" type="button" onclick="setState('In Office','Principal\\'s Office')">In Office</button>
-      <button class="btn" type="button" onclick="setState('Visiting Classroom','Class 5B')">Visiting — 5B</button>
-      <button class="btn" type="button" onclick="setState('In Meeting','')">In Meeting</button>
-      <button class="btn" type="button" onclick="setState('Out of School','')">Out of School</button>
-      <button class="btn" type="button" onclick="setState('Absent Today','')">Absent Today</button>
+      <button class="btn" onclick="setCustom('Principal Room')">Principal Room</button>
+      <button class="btn" onclick="setCustom('Office')">Office</button>
+      <button class="btn" onclick="setCustom('Documentation Room')">Documentation Room</button>
+      <button class="btn" onclick="setCustom('OTS')">OTS</button>
+      <button class="btn" onclick="setCustom('Primary Block OTS')">Primary Block OTS</button>
+      <button class="btn" onclick="setCustom('Library')">Library</button>
+      <button class="btn" onclick="setCustom('Physics Lab')">Physics Lab</button>
+      <button class="btn" onclick="setCustom('Chemistry Lab')">Chemistry Lab</button>
+      <button class="btn" onclick="setCustom('CS Lab')">CS Lab</button>
+      <button class="btn" onclick="setCustom('ATL Lab')">ATL Lab</button>
+      <button class="btn" onclick="setCustom('Reception')">Reception</button>
+      <button class="btn" onclick="setStatus('Absent Today')">Absent Today</button>
+      <button class="btn" onclick="setStatus('In Meeting')">In Meeting</button>
+      <button class="btn" onclick="setStatus('Out of School')">Out of School</button>
     </div>
-    <div class="row">
-      <input class="input" id="loc" placeholder="Custom location (e.g., Class 7C)">
-      <button class="btn" type="button" onclick="visit()">Set Visiting</button>
+    <div class="row" style="margin-top:10px">
+      <input class="input" id="customLoc" placeholder="Type any location (e.g., Class 7A)">
+      <button class="btn" type="button" onclick="setCustomField()">Set Custom Location</button>
     </div>
   </div>
   <div class="status-card">
@@ -159,22 +168,83 @@ h1 {
   </div>
 </div>
 <script>
-async function setState(status, location){
-  await fetch('/api/set',{method:'POST',headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({status, location})});
+async function setCustom(location){
+  let status = (
+    location.toLowerCase().includes("lab") ||
+    location.toLowerCase().includes("class")
+  ) ? "Visiting" : "In";
+  await fetch('/api/set',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status, location})
+  });
   alert('Updated: ' + status + (location? (' — ' + location): ''));
   refresh();
 }
-async function visit(){
-  const loc = (document.getElementById('loc').value||'').trim();
-  if(!loc){ alert('Enter a location'); return; }
-  await setState('Visiting Classroom', loc);
+async function setStatus(status){
+  await fetch('/api/set',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status, location:""})
+  });
+  alert('Updated: ' + status);
+  refresh();
+}
+async function setCustomField(){
+  const location = (document.getElementById('customLoc').value||'').trim();
+  if(!location){ alert('Enter a location'); return; }
+  let status = (
+    location.toLowerCase().includes("lab") ||
+    location.toLowerCase().includes("class")
+  ) ? "Visiting" : "In";
+  await fetch('/api/set',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({status, location})
+  });
+  alert('Updated: ' + status + (location? (' — ' + location): ''));
+  document.getElementById('customLoc').value = '';
+  refresh();
 }
 async function refresh(){
   try{
     const r = await fetch('/status',{cache:'no-store'}); const s = await r.json();
-    document.getElementById('status').textContent = s.status + (s.location ? ' — ' + s.location : '');
-    document.getElementById('meta').textContent = 'Updated ' + new Date(s.since*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    let status = s.status || "";
+    let location = s.location || "";
+    if (status.toLowerCase().includes("absent")) {
+      document.getElementById('status').textContent = "Principal is absent today";
+      document.getElementById('meta').textContent = "";
+    } else if (status.toLowerCase().includes("meeting")) {
+      document.getElementById('status').textContent = "Principal is in meeting";
+      document.getElementById('meta').textContent = "";
+    } else if (status.toLowerCase().includes("out")) {
+      document.getElementById('status').textContent = "Principal is out of school";
+      document.getElementById('meta').textContent = "";
+    } else if (
+      status.toLowerCase().includes("visiting") ||
+      (location && (
+        location.toLowerCase().includes("lab") ||
+        location.toLowerCase().includes("class")
+      ))
+    ) {
+      document.getElementById('status').textContent = "Principal is visiting — " + location;
+      document.getElementById('meta').textContent = "Updated " + new Date(s.since*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    } else if (
+      location &&
+      (
+        location.toLowerCase().includes("ots") ||
+        location.toLowerCase().includes("office") ||
+        location.toLowerCase().includes("room") ||
+        location.toLowerCase().includes("reception") ||
+        location.toLowerCase().includes("library")
+      )
+    ) {
+      document.getElementById('status').textContent = "Principal is in — " + location;
+      document.getElementById('meta').textContent = "Updated " + new Date(s.since*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    } else {
+      document.getElementById('status').textContent = "Principal is in — " + location;
+      document.getElementById('meta').textContent = "Updated " + new Date(s.since*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'});
+    }
   }catch(e){}
 }
 setInterval(refresh, 2000); refresh();
