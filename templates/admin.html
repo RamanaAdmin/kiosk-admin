@@ -262,6 +262,7 @@ async function loadUrgent(){
       <div class="urgent-msg" id="msg-${m.id}">
         <span class="reason">${m.reason}:</span>
         <span class="text">${m.text}</span>
+        ${m.name || m.designation ? `<div style="font-size:0.98em;color:#00897b;margin-top:2px;">${m.name ? m.name : ""}${m.name && m.designation ? ", " : ""}${m.designation ? m.designation : ""}</div>` : ""}
         <span class="meta">${new Date(m.time*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'})}</span>
         <div class="replybox">
           <div class="reply-thread" id="reply-thread-${m.id}">
@@ -273,7 +274,7 @@ async function loadUrgent(){
             <button class="btn" onclick="quickReply(${m.id},'I will call you')">I will call you</button>
           </div>
           <div class="replyrow">
-            <input class="input" id="reply-${m.id}" placeholder="Custom reply…">
+            <input class="input" id="reply-${m.id}" autocomplete="off" placeholder="Custom reply…">
             <button class="btn" onclick="sendTextReply(${m.id})">Send</button>
           </div>
         </div>
