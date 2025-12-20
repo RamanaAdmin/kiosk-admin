@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiosk — Principal Status</title>
+<style>
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #a7ffeb 0%, #64b5f6 60%, #1de9b6 100%);
+  font-family: 'Inter', system-ui, sans-serif;
+  color: #222;
+}
+.topbar {
+  width: 100vw;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  padding: 18px 32px 0 32px;
+  z-index: 2;
+  pointer-events: none;
+}
+.topbar .date, .topbar .time {
+  font-size: 1.1em;
+  font-weight: 600;
+  color: #00897b;
+  background: rgba(255,255,255,0.18);
+  border-radius: 12px;
+  padding: 7px 16px;
+  box-shadow: 0 2px 8px #0001;
+  pointer-events: auto;
+}
+.hotzone {
+  position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 20;
+  background: transparent;
+}
+.wrap {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.card {
+  background: rgba(255,255,255,0.22);
+  box-shadow: 0 8px 32px #0002;
+  border-radius: 22px;
+  padding: 38px 30px 30px 30px;
+  max-width: 420px;
+  width: 100%;
+  backdrop-filter: blur(14px) saturate(120%);
+  border: 1.5px solid rgba(0,0,0,0.08);
+  margin-bottom: 32px;
+  text-align: center;
+  margin-top: 70px;
+}
+.position-box {
+  background: rgba(255,255,255,0.30);
+  border-radius: 16px;
+  box-shadow: 0 2px 8px #0001;
+  padding: 18px 10px 14px 10px;
+  margin: 0 auto 22px auto;
+  max-width: 320px;
+  font-size: 1.25em;
+  font-weight: 700;
+  color: #00695c;
+  letter-spacing: 0.5px;
+  border: 1.5px solid #b2dfdb;
+}
+.line1 { font-size: 2.1em; font-weight: 800; margin-bottom: 0.3em; color: #00695c;}
+.line3 { font-size: 1.1em; color: #039be5; margin-bottom: 1.2em; }
+.row { display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
+.btn {
+  padding: 13px 18px;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
+  color: #00695c;
+  font-weight: 700;
+  font-size: 1.1em;
+  cursor: pointer;
+  box-shadow: 0 2px 8px #0001;
+  transition: filter .2s;
+}
+.btn:active { filter: brightness(0.95);}
+.btn-urgent { background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); color: #fff; }
+.btn-request { background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); color: #00695c; }
+.btn-request.stale-strong { background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); color: #222; }
+.modal {
+  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  display: none; align-items: center; justify-content: center; z-index: 10;
+}
+.modal .card {
+  max-width: 400px; margin: 0;
+  padding: 32px 20px 24px 20px;
+}
+.tiles {
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin: 10px 0 14px 0;
+}
+.tile {
+  padding: 13px; border-radius: 12px; text-align: center; font-weight: 700;
+  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.13);
+  cursor: pointer; user-select: none; font-size: 1.1em; color: #00695c;
+  transition: background .2s, color .2s;
+}
+.tile.active {
+  background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
+  color: #fff;
+  border: 1.5px solid #1de9b6;
+}
+.field { margin-top: 10px; }
+textarea.msg {
+  width: 100%; height: 80px; padding: 12px; border-radius: 12px;
+  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.18);
+  color: #222; font-size: 1.1em; resize: none; margin-bottom: 8px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border .2s;
+  display: block;
+}
+textarea.msg:focus { border: 1.5px solid #1de9b6; }
+.count { font-size: 12px; opacity: .75; margin-top: 2px; text-align: right; }
+.actions { display: flex; gap: 10px; margin-top: 14px; justify-content: center; }
+.btn-secondary {
+  background: linear-gradient(90deg,#b2dfdb 0%,#64b5f6 100%);
+  color: #00695c;
+}
+.toast {
+  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
+  background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.12);
+  padding: 10px 14px; border-radius: 10px; opacity: 0; pointer-events: none; color: #fff; z-index: 20;
+  transition: opacity .25s ease, transform .25s ease;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px);}
+.urgent-msg-box, .urgent-reply-box {
+  background: rgba(255,255,255,0.18);
+  border-radius: 16px;
+  margin: 18px 0 0 0;
+  padding: 16px 14px 14px 14px;
+  box-shadow: 0 2px 8px #0001;
+  text-align: left;
+  font-size: 1.08em;
+  min-height: 40px;
+  max-width: 370px;
+  margin-left: auto;
+  margin-right: auto;
+}
+.urgent-msg-box .label {
+  color: #009688; font-weight: 700; margin-right: 8px;
+}
+.urgent-msg-box .msg {
+  color: #222; font-weight: 500;
+}
+.urgent-msg-box .meta {
+  color: #039be5; font-size: 0.95em; float: right;
+}
+.urgent-reply-box {
+  margin-top: 12px;
+  background: rgba(255,255,255,0.28);
+  border: 1.5px solid #b2dfdb;
+}
+.urgent-reply-box .reply-label {
+  color: #039be5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px;
+}
+.urgent-reply-box .reply {
+  color: #00695c; font-weight: 600;
+}
+.urgent-reply-box .meta {
+  color: #039be5; font-size: 0.95em; float: right;
+}
+@media (max-width: 600px) {
+  .wrap, .card, .urgent-msg-box, .urgent-reply-box { max-width: 98vw; }
+  .topbar { padding: 10px 6vw 0 6vw; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="date" id="date"></div>
+  <div class="time" id="time"></div>
+</div>
+<div class="hotzone" id="hotzone" title="Triple-tap for admin"></div>
+<div class="wrap">
+  <div class="card">
+    <div class="line1" id="line1">Principal is In Office</div>
+    <div class="position-box" id="positionBox">Principal's Office</div>
+    <div class="line3" id="line3">Updated 10:42</div>
+    <div class="row">
+      <button class="btn btn-urgent" id="urgentBtn">🚨 Urgent message</button>
+      <button class="btn btn-request" id="requestBtn" style="display:none;">🔔 Request position</button>
+    </div>
+    <div class="urgent-msg-box" id="urgentMsgBox" style="display:none;">
+      <span class="label">Your urgent message:</span>
+      <span class="msg" id="urgentMsgText"></span>
+      <span class="meta" id="urgentMsgTime"></span>
+    </div>
+    <div class="urgent-reply-box" id="urgentReplyBox" style="display:none;">
+      <span class="reply-label">Reply from Principal:</span>
+      <span class="reply" id="urgentReplyText"></span>
+      <span class="meta" id="urgentReplyTime"></span>
+    </div>
+  </div>
+</div>
+
+<!-- Urgent modal -->
+<div class="modal" id="urgentModal" aria-hidden="true">
+  <div class="card">
+    <h3 style="margin-top:0;">Send urgent message</h3>
+    <div class="tiles" id="reasonTiles">
+      <div class="tile active" data-reason="Student emergency">🚑<br>Student</div>
+      <div class="tile" data-reason="Parent waiting">👪<br>Parent</div>
+      <div class="tile" data-reason="Staff help">🧑‍🏫<br>Staff</div>
+      <div class="tile" data-reason="Document/signature">📝<br>Document</div>
+      <div class="tile" data-reason="Other">🔖<br>Other</div>
+    </div>
+    <div class="field">
+      <textarea id="urgentMsg" class="msg" rows="3" placeholder="Type your message (max 200 chars)" maxlength="200"></textarea>
+      <div class="count" id="msgCount">0 / 200</div>
+    </div>
+    <div class="actions">
+      <button class="btn btn-secondary" id="cancelUrgent">Cancel</button>
+      <button class="btn btn-urgent" id="sendUrgent">Send</button>
+    </div>
+  </div>
+</div>
+<div class="toast" id="toast">Sent</div>
+
+<script>
+let statusText = 'In Office', locationText = "Principal's Office", lastUpdated = Date.now() - 10000;
+let lastUrgent = null;
+
+const line1 = document.getElementById('line1');
+const positionBox = document.getElementById('positionBox');
+const line3 = document.getElementById('line3');
+const requestBtn = document.getElementById('requestBtn');
+const urgentBtn = document.getElementById('urgentBtn');
+const urgentModal = document.getElementById('urgentModal');
+const cancelUrgent = document.getElementById('cancelUrgent');
+const sendUrgent = document.getElementById('sendUrgent');
+const msgEl = document.getElementById('urgentMsg');
+const countEl = document.getElementById('msgCount');
+const tiles = Array.from(document.querySelectorAll('.tile'));
+const urgentMsgBox = document.getElementById('urgentMsgBox');
+const urgentMsgText = document.getElementById('urgentMsgText');
+const urgentMsgTime = document.getElementById('urgentMsgTime');
+const urgentReplyBox = document.getElementById('urgentReplyBox');
+const urgentReplyText = document.getElementById('urgentReplyText');
+const urgentReplyTime = document.getElementById('urgentReplyTime');
+const dateEl = document.getElementById('date');
+const timeEl = document.getElementById('time');
+
+function fmtTime(ts){ return new Date(ts*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
+function fmtDate(ts){ return new Date(ts*1000).toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'}); }
+async function refreshUI(){
+  try {
+    const r = await fetch('/status',{cache:'no-store'}); const s = await r.json();
+    statusText = s.status; locationText = s.location; lastUpdated = s.since*1000;
+    line1.textContent = 'Principal is ' + statusText;
+    positionBox.textContent = locationText || '';
+    line3.textContent = 'Updated ' + fmtTime(s.since);
+    const ageSec = Math.floor((s.server_time - s.since));
+    if (ageSec >= 60*20){
+      requestBtn.style.display = 'inline-block';
+      if (ageSec >= 60*40) requestBtn.classList.add('stale-strong');
+      else requestBtn.classList.remove('stale-strong');
+    } else {
+      requestBtn.style.display = 'none';
+      requestBtn.classList.remove('stale-strong');
+    }
+    // Show urgent message and reply
+    lastUrgent = s.urgent;
+    if (lastUrgent) {
+      urgentMsgBox.style.display = '';
+      urgentMsgText.textContent = lastUrgent.reason + ': ' + lastUrgent.text;
+      urgentMsgTime.textContent = fmtTime(lastUrgent.time);
+      if (lastUrgent.reply) {
+        urgentReplyBox.style.display = '';
+        urgentReplyText.textContent = lastUrgent.reply.text;
+        urgentReplyTime.textContent = fmtTime(lastUrgent.reply.time);
+      } else {
+        urgentReplyBox.style.display = 'none';
+      }
+    } else {
+      urgentMsgBox.style.display = 'none';
+      urgentReplyBox.style.display = 'none';
+    }
+    // Date/time
+    const nowd = new Date();
+    dateEl.textContent = nowd.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
+    timeEl.textContent = nowd.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+  } catch(e){}
+}
+setInterval(refreshUI, 2000); refreshUI();
+
+function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
+
+urgentBtn.onclick = ()=>{ urgentModal.style.display='flex'; urgentModal.setAttribute('aria-hidden','false'); setTimeout(()=>msgEl.focus(),50); };
+cancelUrgent.onclick = ()=>{ urgentModal.style.display='none'; urgentModal.setAttribute('aria-hidden','true'); };
+tiles.forEach(t=> t.addEventListener('click', ()=>{ tiles.forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
+msgEl.addEventListener('input', ()=> countEl.textContent = `${msgEl.value.length} / 200`);
+sendUrgent.onclick = async ()=>{
+  const text = msgEl.value.trim();
+  if(!text){ toast('Please enter a message'); return; }
+  urgentModal.style.display='none'; urgentModal.setAttribute('aria-hidden','true');
+  const reason = tiles.find(x=>x.classList.contains('active')).getAttribute('data-reason');
+  const fd = new FormData();
+  fd.append('reason', reason);
+  fd.append('message', text);
+  await fetch('/urgent', {method:'POST', body:fd});
+  toast('Sent: ' + reason + ': ' + text);
+  msgEl.value=''; countEl.textContent='0 / 200';
+  setTimeout(refreshUI, 1000);
+};
+requestBtn.onclick = ()=>{ toast('Request sent (demo)'); };
+
+// Triple-tap top-left corner to open /admin
+const hotzone = document.getElementById('hotzone');
+let taps = 0, tmr = null;
+hotzone.addEventListener('click', ()=>{
+  taps++; clearTimeout(tmr); tmr = setTimeout(()=>taps=0, 900);
+  if (taps >= 3) { window.location.href = '/admin'; taps = 0; }
+});
+</script>
+</body>
+</html>
