@@ -185,9 +185,9 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
 <div class="hotzone" id="hotzone" title="Triple-tap for admin"></div>
 <div class="wrap">
   <div class="card">
-    <div class="line1" id="line1">Principal is In Office</div>
-    <div class="position-box" id="positionBox">Principal's Office</div>
-    <div class="line3" id="line3">Updated 10:42</div>
+    <div class="line1" id="line1"></div>
+    <div class="position-box" id="positionBox"></div>
+    <div class="line3" id="line3"></div>
     <div class="row">
       <button class="btn btn-urgent" id="urgentBtn">🚨 Urgent message</button>
       <button class="btn btn-request" id="requestBtn" style="display:none;">🔔 Request position</button>
@@ -254,13 +254,50 @@ const timeEl = document.getElementById('time');
 
 function fmtTime(ts){ return new Date(ts*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
 function fmtDate(ts){ return new Date(ts*1000).toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'}); }
+function updateKioskDisplay(s) {
+  let status = s.status || "";
+  let location = s.location || "";
+  if (status.toLowerCase().includes("absent")) {
+    line1.textContent = "Principal is absent today";
+    positionBox.textContent = "";
+  } else if (status.toLowerCase().includes("meeting")) {
+    line1.textContent = "Principal is in meeting";
+    positionBox.textContent = "";
+  } else if (status.toLowerCase().includes("out")) {
+    line1.textContent = "Principal is out of school";
+    positionBox.textContent = "";
+  } else if (
+    status.toLowerCase().includes("visiting") ||
+    (location && (
+      location.toLowerCase().includes("lab") ||
+      location.toLowerCase().includes("class")
+    ))
+  ) {
+    line1.textContent = "Principal is visiting";
+    positionBox.textContent = location;
+  } else if (
+    location &&
+    (
+      location.toLowerCase().includes("ots") ||
+      location.toLowerCase().includes("office") ||
+      location.toLowerCase().includes("room") ||
+      location.toLowerCase().includes("reception") ||
+      location.toLowerCase().includes("library")
+    )
+  ) {
+    line1.textContent = "Principal is in";
+    positionBox.textContent = location;
+  } else {
+    line1.textContent = "Principal is in";
+    positionBox.textContent = location;
+  }
+  line3.textContent = "Updated " + fmtTime(s.since);
+}
+
 async function refreshUI(){
   try {
     const r = await fetch('/status',{cache:'no-store'}); const s = await r.json();
-    statusText = s.status; locationText = s.location; lastUpdated = s.since*1000;
-    line1.textContent = 'Principal is ' + statusText;
-    positionBox.textContent = locationText || '';
-    line3.textContent = 'Updated ' + fmtTime(s.since);
+    updateKioskDisplay(s);
     const ageSec = Math.floor((s.server_time - s.since));
     if (ageSec >= 60*20){
       requestBtn.style.display = 'inline-block';
