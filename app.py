@@ -50,7 +50,7 @@ def index():
 @APP.get("/status")
 def status():
     s = load_state()
-    urgent = load_urgent()
+    urgent = [m for m in load_urgent() if now() - m["time"] <= 20*60]
     last_urgent = urgent[-1] if urgent else None
     return jsonify({
         "status": s["status"],
@@ -66,6 +66,8 @@ def status():
 def urgent():
     reason  = (request.form.get("reason") or "Other").strip()
     message = (request.form.get("message") or "").strip()
+    name = (request.form.get("name") or "").strip()
+    designation = (request.form.get("designation") or "").strip()
     if not message:
         return jsonify({"ok": False, "msg": "Message required"}), 400
     urgent = load_urgent()
@@ -73,6 +75,8 @@ def urgent():
         "id": next_id(urgent),
         "reason": reason,
         "text": message,
+        "name": name,
+        "designation": designation,
         "time": now(),
         "reply": None
     }
@@ -82,7 +86,7 @@ def urgent():
 
 @APP.get("/urgent")
 def urgent_list():
-    urgent = load_urgent()
+    urgent = [m for m in load_urgent() if now() - m["time"] <= 20*60]
     return jsonify({"urgent": urgent})
 
 @APP.post("/reply")
