@@ -5,13 +5,16 @@
 <meta name="viewport" content="width=800, initial-scale=1">
 <title>Kiosk — Principal Status</title>
 <style>
-body {
+html, body {
   margin: 0;
-  min-height: 100vh;
+  padding: 0;
+  width: 800px;
+  height: 480px;
   background: linear-gradient(135deg, #a7ffeb 0%, #64b5f6 60%, #1de9b6 100%);
   font-family: 'Inter', system-ui, sans-serif;
   color: #222;
-  font-size: 1.25em;
+  font-size: 22px;
+  overflow: hidden;
 }
 .topbar {
   width: 100vw;
@@ -20,17 +23,17 @@ body {
   align-items: center;
   position: fixed;
   top: 0; left: 0; right: 0;
-  padding: 8px 18px 0 18px;
+  padding: 8px 24px 0 24px;
   z-index: 2;
   pointer-events: none;
 }
 .topbar .date, .topbar .time {
-  font-size: 1.1em;
+  font-size: 1em;
   font-weight: 600;
   color: #00897b;
   background: rgba(255,255,255,0.18);
   border-radius: 12px;
-  padding: 7px 16px;
+  padding: 5px 14px;
   box-shadow: 0 2px 8px #0001;
   pointer-events: auto;
 }
@@ -40,6 +43,7 @@ body {
 }
 .wrap {
   min-height: 100vh;
+  width: 100vw;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -49,31 +53,28 @@ body {
   background: rgba(255,255,255,0.22);
   box-shadow: 0 8px 32px #0002;
   border-radius: 22px;
-  padding: 18px 2vw 18px 2vw;
-  width: 98vw;
+  padding: 18px 0 18px 0;
+  width: 96vw;
+  max-width: 760px;
   min-width: 0;
-  max-width: none;
-  backdrop-filter: blur(14px) saturate(120%);
-  border: 1.5px solid rgba(0,0,0,0.08);
-  margin-bottom: 18px;
-  text-align: center;
   margin-top: 60px;
+  text-align: center;
 }
 .position-box {
   background: rgba(255,255,255,0.30);
   border-radius: 16px;
   box-shadow: 0 2px 8px #0001;
   padding: 18px 10px 14px 10px;
-  margin: 0 auto 22px auto;
-  width: 90vw;
-  font-size: 1.3em;
+  margin: 0 auto 18px auto;
+  width: 80vw;
+  font-size: 1.2em;
   font-weight: 700;
   color: #00695c;
   letter-spacing: 0.5px;
   border: 1.5px solid #b2dfdb;
 }
-.line1 { font-size: 2.1em; font-weight: 800; margin-bottom: 0.3em; color: #00695c;}
-.line3 { font-size: 1.1em; color: #039be5; margin-bottom: 1.2em; }
+.line1 { font-size: 2.1em; font-weight: 800; margin-bottom: 0.2em; color: #00695c;}
+.line3 { font-size: 1.1em; color: #039be5; margin-bottom: 1em; }
 .row { display: flex; gap: 18px; justify-content: center; margin-bottom: 18px; }
 .btn {
   padding: 18px 0;
@@ -82,10 +83,10 @@ body {
   background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
   color: #00695c;
   font-weight: 700;
-  font-size: 1.3em;
+  font-size: 1.2em;
   cursor: pointer;
-  min-width: 160px;
-  min-height: 60px;
+  min-width: 180px;
+  min-height: 54px;
   box-shadow: 0 2px 8px #0001;
   transition: filter .2s;
 }
@@ -98,11 +99,11 @@ body {
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
 .modal .card {
-  width: 96vw; max-width: 96vw; min-width: 0;
-  padding: 18px 2vw 18px 2vw;
+  width: 96vw; max-width: 760px; min-width: 0;
+  padding: 18px 0 18px 0;
 }
 .tiles {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 10px 0 14px 0;
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin: 10px 0 14px 0;
 }
 .tile {
   padding: 18px 0; border-radius: 12px; text-align: center; font-weight: 700;
@@ -170,7 +171,7 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
   color: #039be5; font-size: 0.95em; float: right;
 }
 .urgent-reply-box {
-  margin-top: 12px;
+  margin-top: 10px;
   background: rgba(255,255,255,0.28);
   border: 1.5px solid #b2dfdb;
 }
@@ -190,23 +191,23 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
 }
 #osk .osk-key {
   flex: 1 1 0;
-  min-width: 44px;
-  max-width: 60px;
+  min-width: 54px;
+  max-width: 80px;
   margin: 2px;
   padding: 18px 0;
   border-radius: 8px;
   border: 1px solid #b2dfdb;
   background: #e0f7fa;
   font-weight: 700;
-  font-size: 1.3em;
+  font-size: 1.5em;
   color: #111;
   text-align: center;
   cursor: pointer;
   user-select: none;
   transition: background .2s;
 }
-#osk .osk-key.space { min-width: 120px; max-width: 180px; flex: 2 1 0; }
-#osk .osk-key.backspace { min-width: 80px; max-width: 120px; }
+#osk .osk-key.space { min-width: 160px; max-width: 220px; flex: 2 1 0; }
+#osk .osk-key.backspace { min-width: 100px; max-width: 140px; }
 #osk .osk-key:active { background: #b2ebf2; }
 @media (max-width: 600px) {
   .wrap, .card, .urgent-msg-box, .urgent-reply-box { max-width: 98vw; }
