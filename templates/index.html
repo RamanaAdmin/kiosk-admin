@@ -5,19 +5,17 @@
 <meta name="viewport" content="width=800, initial-scale=1">
 <title>Kiosk — Principal Status</title>
 <style>
-body {
-  margin: 0;
-  padding: 0;
-  width: 100%;
-  height: 100%;
+html, body {
+  margin: 0; padding: 0;
+  width: 100vw; height: 100vh;
   background: linear-gradient(135deg, #a7ffeb 0%, #64b5f6 60%, #1de9b6 100%);
   font-family: 'Inter', system-ui, sans-serif;
   color: #222;
-  font-size: 22px;
+  font-size: 28px;
   overflow: hidden;
 }
 .topbar {
-  width: 100%;
+  width: 100vw;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -31,7 +29,7 @@ body {
   box-shadow: 0 2px 8px #0001; pointer-events: auto;
 }
 .hotzone { position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 20; background: transparent; }
-.wrap { width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+.wrap { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .card {
   background: rgba(255,255,255,0.22); box-shadow: 0 8px 32px #0002; border-radius: 22px;
   padding: 18px 0 18px 0; width: 100%; max-width: 400px; min-width: 0;
@@ -57,7 +55,7 @@ body {
 .btn-request { background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); color: #00695c; }
 .btn-request.stale-strong { background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); color: #222; }
 .modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  position: fixed; left:0; top:0; width:100vw; height:100vh; background: rgba(0,0,0,.45);
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
 .modal .card {
