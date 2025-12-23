@@ -32,7 +32,7 @@ html, body {
 .wrap { width: 100vw; height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; }
 .card {
   background: rgba(255,255,255,0.22); box-shadow: 0 8px 32px #0002; border-radius: 22px;
-  padding: 0; width: 96vw; min-width: 0; margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 0; width: 95vw; min-width: 0; margin: 0; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center;
 }
 .position-box {
   background: rgba(255,255,255,0.30); border-radius: 16px; box-shadow: 0 2px 8px #0001;
@@ -57,12 +57,21 @@ html, body {
   position: fixed; left:0; top:0; width:100vw; height:100vh; background: rgba(0,0,0,.45);
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
-.modal .card {
-  width: 98vw; max-width: 98vw; min-width: 0; border-radius: 0; padding: 0; margin: 0;
-  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+.modal-inner {
+  background: rgba(255,255,255,0.97);
+  border-radius: 22px;
+  box-shadow: 0 8px 32px #0002;
+  width: 95vw;
+  max-width: 600px;
+  padding: 18px 12px 8px 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  color: #111;
 }
 .tiles {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 18px; margin: 18px 0 18px 0; width: 90vw;
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin: 18px 0 18px 0; width: 100%;
 }
 .tile {
   padding: 22px 0; border-radius: 12px; text-align: center; font-weight: 700;
@@ -75,42 +84,52 @@ html, body {
   color: #fff;
   border: 1.5px solid #1de9b6;
 }
-.field { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; width: 90vw; }
-.input {
-  width: 100%; padding: 18px; border-radius: 12px; border: 1.5px solid #b2dfdb;
-  background: rgba(255,255,255,0.18); color: #111; font-size: 1.2em; margin-bottom: 0;
-  outline: none; transition: border .2s;
-}
-.input:focus { border: 1.5px solid #1de9b6; }
-textarea.msg {
-  width: 100%; height: 80px; padding: 14px; border-radius: 12px;
-  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.18);
-  color: #111; font-size: 1.2em; resize: none; margin-bottom: 8px;
-  box-sizing: border-box;
+.field { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; width: 100%; }
+.input, textarea.msg {
+  font-size: 1.1em;
+  min-height: 44px;
+  border-radius: 10px;
+  border: 1.5px solid #b2dfdb;
+  background: rgba(255,255,255,0.18);
+  color: #111;
   outline: none;
   transition: border .2s;
-  display: block;
+  width: 100%;
+  box-sizing: border-box;
 }
-textarea.msg:focus { border: 1.5px solid #1de9b6; }
-.count { font-size: 16px; opacity: .75; margin-top: 2px; text-align: right; }
-.actions { display: flex; gap: 18px; margin-top: 18px; justify-content: center; }
-.btn-secondary {
-  background: linear-gradient(90deg,#b2dfdb 0%,#64b5f6 100%);
-  color: #00695c;
+textarea.msg { resize: none; }
+.count { font-size: 14px; opacity: .75; text-align: right; }
+.actions { display: flex; gap: 14px; justify-content: center; }
+#osk .osk-row {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
 }
-.toast {
-  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
-  background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.12);
-  padding: 16px 22px; border-radius: 10px; opacity: 0; pointer-events: none; color: #fff; z-index: 20;
-  transition: opacity .25s ease, transform .25s ease;
-  font-size: 1.2em;
+#osk .osk-key {
+  flex: 1 1 0;
+  min-width: 54px;
+  max-width: 80px;
+  margin: 2px;
+  padding: 18px 0;
+  border-radius: 8px;
+  border: 1px solid #b2dfdb;
+  background: #e0f7fa;
+  font-weight: 700;
+  font-size: 1.5em;
+  color: #111;
+  text-align: center;
+  cursor: pointer;
+  user-select: none;
+  transition: background .2s;
 }
-.toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px);}
+#osk .osk-key.space { min-width: 160px; max-width: 220px; flex: 2 1 0; }
+#osk .osk-key.backspace { min-width: 100px; max-width: 140px; }
+#osk .osk-key:active { background: #b2ebf2; }
 .urgent-msg-box, .urgent-reply-box {
   background: rgba(255,255,255,0.18);
   border-radius: 16px;
   margin: 18px 0 0 0;
-  padding: 18px 14px 14px 14px;
+  padding: 16px 14px 14px 14px;
   box-shadow: 0 2px 8px #0001;
   text-align: left;
   font-size: 1.18em;
@@ -142,36 +161,6 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
 }
 .urgent-reply-box .meta {
   color: #039be5; font-size: 0.95em; float: right;
-}
-#osk .osk-row {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 4px;
-}
-#osk .osk-key {
-  flex: 1 1 0;
-  min-width: 70px;
-  max-width: 100px;
-  margin: 2px;
-  padding: 24px 0;
-  border-radius: 8px;
-  border: 1px solid #b2dfdb;
-  background: #e0f7fa;
-  font-weight: 700;
-  font-size: 1.7em;
-  color: #111;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: background .2s;
-}
-#osk .osk-key.space { min-width: 220px; max-width: 300px; flex: 2 1 0; }
-#osk .osk-key.backspace { min-width: 120px; max-width: 180px; }
-#osk .osk-key:active { background: #b2ebf2; }
-@media (max-width: 600px) {
-  .wrap, .card, .urgent-msg-box, .urgent-reply-box { max-width: 98vw; }
-  .topbar { padding: 10px 6vw 0 6vw; }
-  .field { flex-direction: column; gap: 0; }
 }
 </style>
 </head>
@@ -205,8 +194,8 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
 
 <!-- Urgent modal -->
 <div class="modal" id="urgentModal" aria-hidden="true">
-  <div class="card">
-    <h3 style="margin-top:0;">Send urgent message</h3>
+  <div class="modal-inner">
+    <h3 style="margin-top:0; margin-bottom:16px;">Send urgent message</h3>
     <div class="tiles" id="reasonTiles">
       <div class="tile active" data-reason="Student emergency">🚑<br>Student</div>
       <div class="tile" data-reason="Parent waiting">👪<br>Parent</div>
@@ -214,19 +203,15 @@ textarea.msg:focus { border: 1.5px solid #1de9b6; }
       <div class="tile" data-reason="Document/signature">📝<br>Document</div>
       <div class="tile" data-reason="Other">🔖<br>Other</div>
     </div>
-    <div class="field">
-      <input id="urgentName" class="input" autocomplete="off" placeholder="Your name (optional)">
-      <input id="urgentDesig" class="input" autocomplete="off" placeholder="Your designation (optional)">
-    </div>
-    <div class="field">
-      <textarea id="urgentMsg" class="msg" rows="3" autocomplete="off" placeholder="Type your message (max 200 chars)" maxlength="200"></textarea>
-      <div class="count" id="msgCount">0 / 200</div>
-    </div>
-    <div id="osk" style="margin-top:10px;"></div>
-    <div class="actions">
+    <input id="urgentName" class="input" autocomplete="off" placeholder="Your name (optional)" style="margin-bottom:10px;">
+    <input id="urgentDesig" class="input" autocomplete="off" placeholder="Your designation (optional)" style="margin-bottom:10px;">
+    <textarea id="urgentMsg" class="msg" rows="2" autocomplete="off" placeholder="Type your message (max 200 chars)" maxlength="200" style="margin-bottom:6px;"></textarea>
+    <div class="count" id="msgCount" style="margin-bottom:10px;">0 / 200</div>
+    <div class="actions" style="margin-bottom:10px;">
       <button class="btn btn-secondary" id="cancelUrgent">Cancel</button>
       <button class="btn btn-urgent" id="sendUrgent">Send</button>
     </div>
+    <div id="osk" style="margin-top:0;"></div>
   </div>
 </div>
 <div class="toast" id="toast">Sent</div>
@@ -429,7 +414,7 @@ function backspaceAtCursor(input) {
   el.addEventListener('focus', ()=>renderOSK(el));
 });
 urgentModal.addEventListener('click', e => {
-  if (![...['urgentName','urgentDesig','urgentMsg']].includes(e.target.id)) osk.innerHTML = '';
+  // Do not hide the keyboard on any click; only hide when modal closes
 });
 </script>
 </body>
