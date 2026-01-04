@@ -2,16 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=800, initial-scale=1">
 <title>Kiosk — Principal Status</title>
+<meta name="viewport" content="width=800, initial-scale=1">
 <style>
-html, body {
+body {
   margin: 0; padding: 0;
-  width: 100vw; height: 100vh;
+  width: 800px; height: 480px;
   background: linear-gradient(135deg, #a7ffeb 0%, #64b5f6 60%, #1de9b6 100%);
   font-family: 'Inter', system-ui, sans-serif;
   color: #222;
-  font-size: 32px;
+  font-size: 28px;
   overflow: hidden;
 }
 .topbar {
@@ -57,37 +57,72 @@ html, body {
   position: fixed; left:0; top:0; width:100vw; height:100vh; background: rgba(0,0,0,.45);
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
-.modal-inner {
-  background: rgba(255,255,255,0.97);
-  border-radius: 22px;
+.urgent-modal-box {
+  position: fixed;
+  left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(255,255,255,0.92);
+  border-radius: 18px;
   box-shadow: 0 8px 32px #0002;
-  width: 95vw;
-  max-width: 600px;
-  padding: 18px 12px 8px 12px;
+  width: 700px;
+  min-height: 320px;
   display: flex;
   flex-direction: column;
-  align-items: stretch;
-  justify-content: flex-start;
   color: #111;
+  justify-content: flex-start;
+  padding: 18px 18px 18px 18px;
 }
-.tiles {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 14px; margin: 18px 0 18px 0; width: 100%;
+.urgent-reasons-row {
+  display: flex;
+  flex-direction: row;
+  gap: 18px;
+  justify-content: space-between;
+  margin-bottom: 18px;
 }
-.tile {
-  padding: 22px 0; border-radius: 12px; text-align: center; font-weight: 700;
-  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.13);
-  cursor: pointer; user-select: none; font-size: 1.2em; color: #00695c;
-  transition: background .2s, color .2s;
+.reason-btn {
+  flex: 1 1 0;
+  min-width: 0;
+  height: 54px;
+  font-size: 1em;
+  font-weight: 700;
+  border-radius: 10px;
+  border: 2px solid #1de9b6;
+  background: #e0f7fa;
+  color: #00695c;
+  margin: 0;
+  cursor: pointer;
+  transition: background .2s;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  line-height: 1.1;
 }
-.tile.active {
+.reason-btn .icon {
+  font-size: 1.2em;
+  line-height: 1.1;
+  margin-bottom: 1px;
+}
+.reason-btn .label {
+  font-size: 0.9em;
+  line-height: 1.1;
+  color: #00695c;
+  font-weight: 700;
+}
+.reason-btn.active, .reason-btn:active {
   background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
   color: #fff;
-  border: 1.5px solid #1de9b6;
 }
-.field { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; width: 100%; }
+.reason-btn.active .label, .reason-btn.active .icon { color: #fff; }
+.urgent-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 10px;
+}
 .input, textarea.msg {
-  font-size: 1.1em;
-  min-height: 44px;
+  font-size: 1em;
+  min-height: 38px;
   border-radius: 10px;
   border: 1.5px solid #b2dfdb;
   background: rgba(255,255,255,0.18);
@@ -99,69 +134,22 @@ html, body {
 }
 textarea.msg { resize: none; }
 .count { font-size: 14px; opacity: .75; text-align: right; }
-.actions { display: flex; gap: 14px; justify-content: center; }
-#osk .osk-row {
+.urgent-actions {
   display: flex;
-  justify-content: center;
-  margin-bottom: 4px;
-}
-#osk .osk-key {
-  flex: 1 1 0;
-  min-width: 54px;
-  max-width: 80px;
-  margin: 2px;
-  padding: 18px 0;
-  border-radius: 8px;
-  border: 1px solid #b2dfdb;
-  background: #e0f7fa;
-  font-weight: 700;
-  font-size: 1.5em;
-  color: #111;
-  text-align: center;
-  cursor: pointer;
-  user-select: none;
-  transition: background .2s;
-}
-#osk .osk-key.space { min-width: 160px; max-width: 220px; flex: 2 1 0; }
-#osk .osk-key.backspace { min-width: 100px; max-width: 140px; }
-#osk .osk-key:active { background: #b2ebf2; }
-.urgent-msg-box, .urgent-reply-box {
-  background: rgba(255,255,255,0.18);
-  border-radius: 16px;
-  margin: 18px 0 0 0;
-  padding: 16px 14px 14px 14px;
-  box-shadow: 0 2px 8px #0001;
-  text-align: left;
-  font-size: 1.18em;
-  min-height: 40px;
-  width: 90vw;
-  max-width: 90vw;
-  margin-left: auto;
-  margin-right: auto;
-}
-.urgent-msg-box .label {
-  color: #009688; font-weight: 700; margin-right: 8px;
-}
-.urgent-msg-box .msg {
-  color: #111; font-weight: 500;
-}
-.urgent-msg-box .meta {
-  color: #039be5; font-size: 0.95em; float: right;
-}
-.urgent-reply-box {
+  justify-content: space-between;
+  gap: 10px;
   margin-top: 10px;
-  background: rgba(255,255,255,0.28);
-  border: 1.5px solid #b2dfdb;
 }
-.urgent-reply-box .reply-label {
-  color: #039be5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px;
+.btn {
+  padding: 10px 0;
+  border-radius: 12px;
+  border: none;
+  background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
+  color: #00695c; font-weight: 700; font-size: 1em; cursor: pointer;
+  min-width: 120px; min-height: 38px; box-shadow: 0 2px 8px #0001; transition: filter .2s;
 }
-.urgent-reply-box .reply {
-  color: #111; font-weight: 600;
-}
-.urgent-reply-box .meta {
-  color: #039be5; font-size: 0.95em; float: right;
-}
+.btn-urgent { background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); color: #fff; }
+.btn-secondary { background: #b2dfdb; color: #00695c; }
 </style>
 </head>
 <body>
@@ -169,253 +157,57 @@ textarea.msg { resize: none; }
   <div class="date" id="date"></div>
   <div class="time" id="time"></div>
 </div>
-<div class="hotzone" id="hotzone" title="Triple-tap for admin"></div>
 <div class="wrap">
   <div class="card">
-    <div class="line1" id="line1"></div>
-    <div class="position-box" id="positionBox"></div>
-    <div class="line3" id="line3"></div>
+    <div class="line1" id="line1">Principal is visiting</div>
+    <div class="position-box" id="positionBox">CS Lab</div>
+    <div class="line3" id="line3">Updated 06:19 AM</div>
     <div class="row">
-      <button class="btn btn-urgent" id="urgentBtn">🚨 Urgent message</button>
-      <button class="btn btn-request" id="requestBtn" style="display:none;">🔔 Request position</button>
-    </div>
-    <div class="urgent-msg-box" id="urgentMsgBox" style="display:none;">
-      <span class="label">Your urgent message:</span>
-      <span class="msg" id="urgentMsgText"></span>
-      <span class="meta" id="urgentMsgTime"></span>
-    </div>
-    <div class="urgent-reply-box" id="urgentReplyBox" style="display:none;">
-      <span class="reply-label">Reply from Principal:</span>
-      <span class="reply" id="urgentReplyText"></span>
-      <span class="meta" id="urgentReplyTime"></span>
+      <button class="btn btn-urgent" id="urgentBtn" onclick="document.getElementById('urgentModal').style.display='flex'">🚨 Urgent message</button>
     </div>
   </div>
 </div>
 
 <!-- Urgent modal -->
-<div class="modal" id="urgentModal" aria-hidden="true">
-  <div class="modal-inner">
-    <h3 style="margin-top:0; margin-bottom:16px;">Send urgent message</h3>
-    <div class="tiles" id="reasonTiles">
-      <div class="tile active" data-reason="Student emergency">🚑<br>Student</div>
-      <div class="tile" data-reason="Parent waiting">👪<br>Parent</div>
-      <div class="tile" data-reason="Staff help">🧑‍🏫<br>Staff</div>
-      <div class="tile" data-reason="Document/signature">📝<br>Document</div>
-      <div class="tile" data-reason="Other">🔖<br>Other</div>
+<div class="modal" id="urgentModal" aria-hidden="false" style="display:none;">
+  <div class="urgent-modal-box">
+    <div class="urgent-reasons-row">
+      <button class="reason-btn active" data-reason="Student emergency"><span class="icon">🚑</span><span class="label">Student</span></button>
+      <button class="reason-btn" data-reason="Parent waiting"><span class="icon">👪</span><span class="label">Parent</span></button>
+      <button class="reason-btn" data-reason="Staff help"><span class="icon">🧑‍🏫</span><span class="label">Staff</span></button>
+      <button class="reason-btn" data-reason="Document/signature"><span class="icon">📝</span><span class="label">Document</span></button>
+      <button class="reason-btn" data-reason="Other"><span class="icon">🔖</span><span class="label">Other</span></button>
+      <button class="reason-btn" data-reason="Other2" style="visibility:hidden;">&nbsp;</button>
     </div>
-    <input id="urgentName" class="input" autocomplete="off" placeholder="Your name (optional)" style="margin-bottom:10px;">
-    <input id="urgentDesig" class="input" autocomplete="off" placeholder="Your designation (optional)" style="margin-bottom:10px;">
-    <textarea id="urgentMsg" class="msg" rows="2" autocomplete="off" placeholder="Type your message (max 200 chars)" maxlength="200" style="margin-bottom:6px;"></textarea>
-    <div class="count" id="msgCount" style="margin-bottom:10px;">0 / 200</div>
-    <div class="actions" style="margin-bottom:10px;">
-      <button class="btn btn-secondary" id="cancelUrgent">Cancel</button>
-      <button class="btn btn-urgent" id="sendUrgent">Send</button>
+    <div class="urgent-fields">
+      <input id="urgentName" class="input" autocomplete="off" placeholder="Your name (optional)">
+      <input id="urgentDesig" class="input" autocomplete="off" placeholder="Your designation (optional)">
+      <textarea id="urgentMsg" class="msg" rows="2" autocomplete="off" placeholder="Type your message (max 200 chars)" maxlength="200"></textarea>
+      <div class="count" id="msgCount">0 / 200</div>
+      <div class="urgent-actions">
+        <button class="btn btn-secondary" id="cancelUrgent" onclick="document.getElementById('urgentModal').style.display='none'">Cancel</button>
+        <button class="btn btn-urgent" id="sendUrgent">Send</button>
+      </div>
     </div>
-    <div id="osk" style="margin-top:0;"></div>
   </div>
 </div>
-<div class="toast" id="toast">Sent</div>
-
 <script>
-let statusText = 'In Office', locationText = "Principal's Office", lastUpdated = Date.now() - 10000;
-let lastUrgent = null;
-
-const line1 = document.getElementById('line1');
-const positionBox = document.getElementById('positionBox');
-const line3 = document.getElementById('line3');
-const requestBtn = document.getElementById('requestBtn');
-const urgentBtn = document.getElementById('urgentBtn');
-const urgentModal = document.getElementById('urgentModal');
-const cancelUrgent = document.getElementById('cancelUrgent');
-const sendUrgent = document.getElementById('sendUrgent');
-const msgEl = document.getElementById('urgentMsg');
-const countEl = document.getElementById('msgCount');
-const tiles = Array.from(document.querySelectorAll('.tile'));
-const urgentMsgBox = document.getElementById('urgentMsgBox');
-const urgentMsgText = document.getElementById('urgentMsgText');
-const urgentMsgTime = document.getElementById('urgentMsgTime');
-const urgentReplyBox = document.getElementById('urgentReplyBox');
-const urgentReplyText = document.getElementById('urgentReplyText');
-const urgentReplyTime = document.getElementById('urgentReplyTime');
-const dateEl = document.getElementById('date');
-const timeEl = document.getElementById('time');
-const urgentName = document.getElementById('urgentName');
-const urgentDesig = document.getElementById('urgentDesig');
-
-function fmtTime(ts){ return new Date(ts*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
-function fmtDate(ts){ return new Date(ts*1000).toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'}); }
-function updateKioskDisplay(s) {
-  let status = s.status || "";
-  let location = s.location || "";
-  if (status.toLowerCase().includes("absent")) {
-    line1.textContent = "Principal is absent today";
-    positionBox.textContent = "";
-  } else if (status.toLowerCase().includes("meeting")) {
-    line1.textContent = "Principal is in meeting";
-    positionBox.textContent = "";
-  } else if (status.toLowerCase().includes("out")) {
-    line1.textContent = "Principal is out of school";
-    positionBox.textContent = "";
-  } else if (
-    status.toLowerCase().includes("visiting") ||
-    (location && (
-      location.toLowerCase().includes("lab") ||
-      location.toLowerCase().includes("class")
-    ))
-  ) {
-    line1.textContent = "Principal is visiting";
-    positionBox.textContent = location;
-  } else if (
-    location &&
-    (
-      location.toLowerCase().includes("ots") ||
-      location.toLowerCase().includes("office") ||
-      location.toLowerCase().includes("room") ||
-      location.toLowerCase().includes("reception") ||
-      location.toLowerCase().includes("library")
-    )
-  ) {
-    line1.textContent = "Principal is in";
-    positionBox.textContent = location;
-  } else {
-    line1.textContent = "Principal is in";
-    positionBox.textContent = location;
-  }
-  line3.textContent = "Updated " + fmtTime(s.since);
+function updateDateTime() {
+  const now = new Date();
+  document.getElementById('date').textContent = now.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
+  document.getElementById('time').textContent = now.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
 }
+setInterval(updateDateTime, 1000); updateDateTime();
 
-async function refreshUI(){
-  try {
-    const r = await fetch('/status',{cache:'no-store'}); const s = await r.json();
-    updateKioskDisplay(s);
-    const ageSec = Math.floor((s.server_time - s.since));
-    if (ageSec >= 60*20){
-      requestBtn.style.display = 'inline-block';
-      if (ageSec >= 60*40) requestBtn.classList.add('stale-strong');
-      else requestBtn.classList.remove('stale-strong');
-    } else {
-      requestBtn.style.display = 'none';
-      requestBtn.classList.remove('stale-strong');
-    }
-    // Show urgent message and reply
-    lastUrgent = s.urgent;
-    if (lastUrgent) {
-      urgentMsgBox.style.display = '';
-      let nameDesig = (lastUrgent.name || "") + (lastUrgent.name && lastUrgent.designation ? ", " : "") + (lastUrgent.designation || "");
-      urgentMsgText.textContent = lastUrgent.reason + ': ' + lastUrgent.text + (nameDesig ? " (" + nameDesig + ")" : "");
-      urgentMsgTime.textContent = fmtTime(lastUrgent.time);
-      if (lastUrgent.reply) {
-        urgentReplyBox.style.display = '';
-        urgentReplyText.textContent = lastUrgent.reply.text;
-        urgentReplyTime.textContent = fmtTime(lastUrgent.reply.time);
-      } else {
-        urgentReplyBox.style.display = 'none';
-      }
-    } else {
-      urgentMsgBox.style.display = 'none';
-      urgentReplyBox.style.display = 'none';
-    }
-    // Date/time
-    const nowd = new Date();
-    dateEl.textContent = nowd.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
-    timeEl.textContent = nowd.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  } catch(e){}
-}
-setInterval(refreshUI, 2000); refreshUI();
-
-function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
-
-urgentBtn.onclick = ()=>{ urgentModal.style.display='flex'; urgentModal.setAttribute('aria-hidden','false'); renderOSK(msgEl); setTimeout(()=>msgEl.focus(),50); };
-cancelUrgent.onclick = ()=>{ urgentModal.style.display='none'; urgentModal.setAttribute('aria-hidden','true'); osk.innerHTML = ''; };
-tiles.forEach(t=> t.addEventListener('click', ()=>{ tiles.forEach(x=>x.classList.remove('active')); t.classList.add('active'); }));
+document.querySelectorAll('.reason-btn').forEach(btn => {
+  btn.onclick = () => {
+    document.querySelectorAll('.reason-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  };
+});
+msgEl = document.getElementById('urgentMsg');
+countEl = document.getElementById('msgCount');
 msgEl.addEventListener('input', ()=> countEl.textContent = `${msgEl.value.length} / 200`);
-sendUrgent.onclick = async ()=>{
-  const text = msgEl.value.trim();
-  const name = urgentName.value.trim();
-  const desig = urgentDesig.value.trim();
-  if(!text){ toast('Please enter a message'); return; }
-  urgentModal.style.display='none'; urgentModal.setAttribute('aria-hidden','true'); osk.innerHTML = '';
-  const reason = tiles.find(x=>x.classList.contains('active')).getAttribute('data-reason');
-  const fd = new FormData();
-  fd.append('reason', reason);
-  fd.append('message', text);
-  fd.append('name', name);
-  fd.append('designation', desig);
-  await fetch('/urgent', {method:'POST', body:fd});
-  toast('Sent: ' + reason + ': ' + text);
-  msgEl.value=''; countEl.textContent='0 / 200';
-  urgentName.value = '';
-  urgentDesig.value = '';
-  setTimeout(refreshUI, 1000);
-};
-requestBtn.onclick = ()=>{ toast('Request sent (demo)'); };
-
-// Triple-tap top-left corner to open /admin
-const hotzone = document.getElementById('hotzone');
-let taps = 0, tmr = null;
-hotzone.addEventListener('click', ()=>{
-  taps++; clearTimeout(tmr); tmr = setTimeout(()=>taps=0, 900);
-  if (taps >= 3) { window.location.href = '/admin'; taps = 0; }
-});
-
-// On-screen keyboard for urgent modal
-const osk = document.getElementById('osk');
-let oskTarget = null;
-const oskLayout = [
-  ['q','w','e','r','t','y','u','i','o','p'],
-  ['a','s','d','f','g','h','j','k','l'],
-  ['z','x','c','v','b','n','m','.','?','!'],
-  ['1','2','3','4','5','6','7','8','9','0'],
-  ['@','_','-','/','(',')',',','\'','"'],
-  ['Space','Backspace']
-];
-function renderOSK(target) {
-  osk.innerHTML = '';
-  oskTarget = target;
-  oskLayout.forEach(row => {
-    const rowDiv = document.createElement('div');
-    rowDiv.className = 'osk-row';
-    row.forEach(key => {
-      const btn = document.createElement('button');
-      btn.className = 'osk-key' + (key === 'Space' ? ' space' : '') + (key === 'Backspace' ? ' backspace' : '');
-      btn.textContent = key === 'Space' ? '␣' : (key === 'Backspace' ? '⌫' : key);
-      btn.onclick = () => {
-        if (!oskTarget) return;
-        if (key === 'Space') insertAtCursor(oskTarget, ' ');
-        else if (key === 'Backspace') backspaceAtCursor(oskTarget);
-        else insertAtCursor(oskTarget, key);
-        oskTarget.focus();
-        if (oskTarget.id === 'urgentMsg') oskTarget.dispatchEvent(new Event('input'));
-      };
-      rowDiv.appendChild(btn);
-    });
-    osk.appendChild(rowDiv);
-  });
-}
-function insertAtCursor(input, text) {
-  if (document.activeElement !== input) input.focus();
-  if (input.setRangeText) {
-    const start = input.selectionStart, end = input.selectionEnd;
-    input.setRangeText(text, start, end, 'end');
-  } else {
-    input.value += text;
-  }
-}
-function backspaceAtCursor(input) {
-  if (document.activeElement !== input) input.focus();
-  const start = input.selectionStart, end = input.selectionEnd;
-  if (start > 0) {
-    input.value = input.value.slice(0, start-1) + input.value.slice(end);
-    input.setSelectionRange(start-1, start-1);
-  }
-}
-['urgentName','urgentDesig','urgentMsg'].forEach(id => {
-  const el = document.getElementById(id);
-  el.addEventListener('focus', ()=>renderOSK(el));
-});
-urgentModal.addEventListener('click', e => {
-  // Do not hide the keyboard on any click; only hide when modal closes
-});
 </script>
 </body>
 </html>
