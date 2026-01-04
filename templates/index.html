@@ -53,6 +53,43 @@ body {
 .btn-urgent { background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); color: #fff; }
 .btn-request { background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); color: #00695c; }
 .btn-request.stale-strong { background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); color: #222; }
+.urgent-msg-box, .urgent-reply-box {
+  background: rgba(255,255,255,0.18);
+  border-radius: 16px;
+  margin: 18px 0 0 0;
+  padding: 16px 14px 14px 14px;
+  box-shadow: 0 2px 8px #0001;
+  text-align: left;
+  font-size: 1.18em;
+  min-height: 40px;
+  width: 90vw;
+  max-width: 90vw;
+  margin-left: auto;
+  margin-right: auto;
+}
+.urgent-msg-box .label {
+  color: #009688; font-weight: 700; margin-right: 8px;
+}
+.urgent-msg-box .msg {
+  color: #111; font-weight: 500;
+}
+.urgent-msg-box .meta {
+  color: #039be5; font-size: 0.95em; float: right;
+}
+.urgent-reply-box {
+  margin-top: 10px;
+  background: rgba(255,255,255,0.28);
+  border: 1.5px solid #b2dfdb;
+}
+.urgent-reply-box .reply-label {
+  color: #039be5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px;
+}
+.urgent-reply-box .reply {
+  color: #111; font-weight: 600;
+}
+.urgent-reply-box .meta {
+  color: #039be5; font-size: 0.95em; float: right;
+}
 .modal {
   position: fixed; left:0; top:0; width:100vw; height:100vh; background: rgba(0,0,0,.45);
   display: none; align-items: center; justify-content: center; z-index: 10;
