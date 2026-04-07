@@ -60,6 +60,18 @@ h1 {
   transition: filter .2s;
 }
 .btn:hover { filter: brightness(1.08); }
+.btn-back {
+  background: linear-gradient(90deg,#009688 0%,#00897b 100%);
+  color: #fff;
+  padding: 14px 28px;
+  font-size: 1.15em;
+  margin-bottom: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  text-decoration: none;
+}
+.btn-back:hover { filter: brightness(1.1); }
 .input {
   padding: 13px;
   border-radius: 12px;
@@ -141,6 +153,7 @@ h1 {
 </head>
 <body>
 <div class="wrap">
+  <a href="/" class="btn btn-back">← Return to Kiosk</a>
   <div class="card">
     <h1>Principal Kiosk — Admin</h1>
     <div class="row">
