@@ -89,44 +89,64 @@ body {
 .btn-urgent { background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); color: #fff; }
 .btn-request { background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); color: #00695c; }
 .btn-request.stale-strong { background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); color: #222; }
+
+/* Dark themed urgent modal */
 .modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,.45);
+  position: fixed; inset: 0; background: rgba(0,0,0,.7);
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
 .modal .card {
   max-width: 400px; margin: 0;
   padding: 32px 20px 24px 20px;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  border: 1.5px solid rgba(255,255,255,0.15);
+  color: #fff;
+}
+.modal .card h3 {
+  color: #fff;
+  font-weight: 800;
+  text-shadow: 0 2px 8px #0005;
 }
 .tiles {
   display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin: 10px 0 14px 0;
 }
 .tile {
   padding: 13px; border-radius: 12px; text-align: center; font-weight: 700;
-  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.13);
-  cursor: pointer; user-select: none; font-size: 1.1em; color: #00695c;
-  transition: background .2s, color .2s;
+  border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08);
+  cursor: pointer; user-select: none; font-size: 1.1em; color: #fff;
+  transition: background .2s, color .2s, border .2s;
+}
+.tile:active {
+  transform: scale(0.97);
 }
 .tile.active {
   background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
   color: #fff;
   border: 1.5px solid #1de9b6;
+  box-shadow: 0 0 15px #1de9b655;
 }
 .field { margin-top: 10px; }
 textarea.msg {
   width: 100%; height: 80px; padding: 12px; border-radius: 12px;
-  border: 1.5px solid #b2dfdb; background: rgba(255,255,255,0.18);
-  color: #222; font-size: 1.1em; resize: none; margin-bottom: 8px;
+  border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1);
+  color: #fff; font-size: 1.1em; resize: none; margin-bottom: 8px;
   box-sizing: border-box;
   outline: none;
-  transition: border .2s;
+  transition: border .2s, background .2s;
   display: block;
 }
-textarea.msg:focus { border: 1.5px solid #1de9b6; }
-.count { font-size: 12px; opacity: .75; margin-top: 2px; text-align: right; }
+textarea.msg::placeholder {
+  color: rgba(255,255,255,0.5);
+}
+textarea.msg:focus { 
+  border: 1.5px solid #1de9b6; 
+  background: rgba(255,255,255,0.15);
+}
+.count { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; text-align: right; }
 .actions { display: flex; gap: 10px; margin-top: 14px; justify-content: center; }
 .btn-secondary {
-  background: linear-gradient(90deg,#b2dfdb 0%,#64b5f6 100%);
-  color: #00695c;
+  background: linear-gradient(90deg,#4a5568 0%,#2d3748 100%);
+  color: #fff;
 }
 .toast {
   position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
@@ -254,7 +274,18 @@ const timeEl = document.getElementById('time');
 
 function fmtTime(ts){ return new Date(ts*1000).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}); }
 function fmtDate(ts){ return new Date(ts*1000).toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'}); }
+
+// Separate function for updating date/time - always runs
+function updateDateTime(){
+  const nowd = new Date();
+  dateEl.textContent = nowd.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
+  timeEl.textContent = nowd.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
+}
+
 async function refreshUI(){
+  // Update date/time first (always works)
+  updateDateTime();
+  
   try {
     const r = await fetch('/status',{cache:'no-store'}); const s = await r.json();
     statusText = s.status; locationText = s.location; lastUpdated = s.since*1000;
@@ -287,13 +318,18 @@ async function refreshUI(){
       urgentMsgBox.style.display = 'none';
       urgentReplyBox.style.display = 'none';
     }
-    // Date/time
-    const nowd = new Date();
-    dateEl.textContent = nowd.toLocaleDateString([], {weekday:'short', year:'numeric', month:'short', day:'numeric'});
-    timeEl.textContent = nowd.toLocaleTimeString([], {hour:'2-digit',minute:'2-digit',second:'2-digit'});
-  } catch(e){}
+  } catch(e){
+    // API failed but date/time still updates
+  }
 }
-setInterval(refreshUI, 2000); refreshUI();
+
+// Update date/time every second
+setInterval(updateDateTime, 1000);
+// Refresh status every 2 seconds
+setInterval(refreshUI, 2000);
+// Initial calls
+updateDateTime();
+refreshUI();
 
 function toast(m){ const t=document.getElementById('toast'); t.textContent=m; t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),1600); }
 
@@ -316,12 +352,12 @@ sendUrgent.onclick = async ()=>{
 };
 requestBtn.onclick = ()=>{ toast('Request sent (demo)'); };
 
-// Triple-tap top-left corner to open /admin
+// 4 taps on top-left corner to open /login
 const hotzone = document.getElementById('hotzone');
 let taps = 0, tmr = null;
 hotzone.addEventListener('click', ()=>{
   taps++; clearTimeout(tmr); tmr = setTimeout(()=>taps=0, 900);
-  if (taps >= 3) { window.location.href = '/admin'; taps = 0; }
+  if (taps >= 4) { window.location.href = '/login'; taps = 0; }
 });
 </script>
 </body>
