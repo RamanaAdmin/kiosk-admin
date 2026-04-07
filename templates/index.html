@@ -19,22 +19,22 @@ body {
   align-items: center;
   position: fixed;
   top: 0; left: 0; right: 0;
-  padding: 18px 32px 0 32px;
+  padding: 12px 28px 0 28px;
   z-index: 2;
   pointer-events: none;
 }
 .topbar .date, .topbar .time {
-  font-size: 1.1em;
-  font-weight: 600;
+  font-size: 1.5em;
+  font-weight: 700;
   color: #00897b;
-  background: rgba(255,255,255,0.18);
-  border-radius: 12px;
-  padding: 7px 16px;
-  box-shadow: 0 2px 8px #0001;
+  background: rgba(255,255,255,0.22);
+  border-radius: 14px;
+  padding: 10px 20px;
+  box-shadow: 0 2px 10px #0001;
   pointer-events: auto;
 }
 .hotzone {
-  position: fixed; top: 0; left: 0; width: 60px; height: 60px; z-index: 20;
+  position: fixed; top: 0; left: 0; width: 80px; height: 80px; z-index: 20;
   background: transparent;
 }
 .wrap {
@@ -48,8 +48,8 @@ body {
   background: rgba(255,255,255,0.22);
   box-shadow: 0 8px 32px #0002;
   border-radius: 22px;
-  padding: 38px 30px 30px 30px;
-  max-width: 420px;
+  padding: 32px 36px 28px 36px;
+  max-width: 520px;
   width: 100%;
   backdrop-filter: blur(14px) saturate(120%);
   border: 1.5px solid rgba(0,0,0,0.08);
@@ -61,34 +61,60 @@ body {
   background: rgba(255,255,255,0.30);
   border-radius: 16px;
   box-shadow: 0 2px 8px #0001;
-  padding: 18px 10px 14px 10px;
-  margin: 0 auto 22px auto;
-  max-width: 320px;
-  font-size: 1.25em;
-  font-weight: 700;
+  padding: 16px 14px;
+  margin: 0 auto 18px auto;
+  max-width: 420px;
+  font-size: 2em;
+  font-weight: 800;
   color: #00695c;
   letter-spacing: 0.5px;
   border: 1.5px solid #b2dfdb;
 }
-.line1 { font-size: 2.1em; font-weight: 800; margin-bottom: 0.3em; color: #00695c;}
-.line3 { font-size: 1.1em; color: #039be5; margin-bottom: 1.2em; }
-.row { display: flex; gap: 12px; justify-content: center; margin-bottom: 10px; }
+.line1 { 
+  font-size: 2.8em; 
+  font-weight: 800; 
+  margin-bottom: 0.2em; 
+  color: #00695c;
+}
+.line3 { 
+  font-size: 1.4em; 
+  color: #039be5; 
+  margin-bottom: 1em;
+  font-weight: 600;
+}
+.row { 
+  display: flex; 
+  gap: 16px; 
+  justify-content: center; 
+  margin-bottom: 10px; 
+}
 .btn {
-  padding: 13px 18px;
-  border-radius: 12px;
+  padding: 16px 28px;
+  border-radius: 14px;
   border: none;
   background: linear-gradient(90deg,#1de9b6 0%,#64b5f6 100%);
   color: #00695c;
   font-weight: 700;
-  font-size: 1.1em;
+  font-size: 1.4em;
   cursor: pointer;
-  box-shadow: 0 2px 8px #0001;
+  box-shadow: 0 2px 10px #0001;
   transition: filter .2s;
 }
 .btn:active { filter: brightness(0.95);}
-.btn-urgent { background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); color: #fff; }
-.btn-request { background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); color: #00695c; }
-.btn-request.stale-strong { background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); color: #222; }
+.btn-urgent { 
+  background: linear-gradient(90deg,#009688 0%,#64b5f6 100%); 
+  color: #fff;
+  font-size: 1.5em;
+  padding: 18px 32px;
+}
+.btn-request { 
+  background: linear-gradient(90deg,#b2ff59 0%,#1de9b6 100%); 
+  color: #00695c; 
+}
+.btn-request.stale-strong { 
+  background: linear-gradient(90deg,#26c6da 0%,#1de9b6 100%); 
+  color: #222; 
+}
 
 /* Dark themed urgent modal */
 .modal {
@@ -96,24 +122,35 @@ body {
   display: none; align-items: center; justify-content: center; z-index: 10;
 }
 .modal .card {
-  max-width: 400px; margin: 0;
-  padding: 32px 20px 24px 20px;
+  max-width: 500px; 
+  margin: 0;
+  padding: 28px 24px 24px 24px;
   background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
   border: 1.5px solid rgba(255,255,255,0.15);
   color: #fff;
+  margin-top: 0;
 }
 .modal .card h3 {
   color: #fff;
   font-weight: 800;
+  font-size: 1.8em;
+  margin-top: 0;
   text-shadow: 0 2px 8px #0005;
 }
 .tiles {
-  display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; margin: 10px 0 14px 0;
+  display: grid; grid-template-columns: repeat(2,1fr); gap: 12px; margin: 12px 0 16px 0;
 }
 .tile {
-  padding: 13px; border-radius: 12px; text-align: center; font-weight: 700;
-  border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.08);
-  cursor: pointer; user-select: none; font-size: 1.1em; color: #fff;
+  padding: 14px; 
+  border-radius: 14px; 
+  text-align: center; 
+  font-weight: 700;
+  border: 1.5px solid rgba(255,255,255,0.25); 
+  background: rgba(255,255,255,0.08);
+  cursor: pointer; 
+  user-select: none; 
+  font-size: 1.3em; 
+  color: #fff;
   transition: background .2s, color .2s, border .2s;
 }
 .tile:active {
@@ -125,11 +162,18 @@ body {
   border: 1.5px solid #1de9b6;
   box-shadow: 0 0 15px #1de9b655;
 }
-.field { margin-top: 10px; }
+.field { margin-top: 12px; }
 textarea.msg {
-  width: 100%; height: 80px; padding: 12px; border-radius: 12px;
-  border: 1.5px solid rgba(255,255,255,0.25); background: rgba(255,255,255,0.1);
-  color: #fff; font-size: 1.1em; resize: none; margin-bottom: 8px;
+  width: 100%; 
+  height: 90px; 
+  padding: 14px; 
+  border-radius: 14px;
+  border: 1.5px solid rgba(255,255,255,0.25); 
+  background: rgba(255,255,255,0.1);
+  color: #fff; 
+  font-size: 1.4em; 
+  resize: none; 
+  margin-bottom: 8px;
   box-sizing: border-box;
   outline: none;
   transition: border .2s, background .2s;
@@ -142,29 +186,42 @@ textarea.msg:focus {
   border: 1.5px solid #1de9b6; 
   background: rgba(255,255,255,0.15);
 }
-.count { font-size: 12px; color: rgba(255,255,255,0.7); margin-top: 2px; text-align: right; }
-.actions { display: flex; gap: 10px; margin-top: 14px; justify-content: center; }
+.count { 
+  font-size: 1em; 
+  color: rgba(255,255,255,0.7); 
+  margin-top: 4px; 
+  text-align: right; 
+}
+.actions { 
+  display: flex; 
+  gap: 14px; 
+  margin-top: 16px; 
+  justify-content: center; 
+}
 .btn-secondary {
   background: linear-gradient(90deg,#4a5568 0%,#2d3748 100%);
   color: #fff;
 }
 .toast {
-  position: fixed; left: 50%; bottom: 16px; transform: translateX(-50%);
-  background: rgba(0,0,0,.6); border: 1px solid rgba(255,255,255,.12);
-  padding: 10px 14px; border-radius: 10px; opacity: 0; pointer-events: none; color: #fff; z-index: 20;
+  position: fixed; left: 50%; bottom: 20px; transform: translateX(-50%);
+  background: rgba(0,0,0,.7); border: 1px solid rgba(255,255,255,.12);
+  padding: 12px 20px; border-radius: 12px; opacity: 0; pointer-events: none; 
+  color: #fff; z-index: 20;
+  font-size: 1.3em;
+  font-weight: 600;
   transition: opacity .25s ease, transform .25s ease;
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-6px);}
 .urgent-msg-box, .urgent-reply-box {
   background: rgba(255,255,255,0.18);
   border-radius: 16px;
-  margin: 18px 0 0 0;
-  padding: 16px 14px 14px 14px;
+  margin: 16px 0 0 0;
+  padding: 14px 16px;
   box-shadow: 0 2px 8px #0001;
   text-align: left;
-  font-size: 1.08em;
+  font-size: 1.2em;
   min-height: 40px;
-  max-width: 370px;
+  max-width: 420px;
   margin-left: auto;
   margin-right: auto;
 }
@@ -172,7 +229,7 @@ textarea.msg:focus {
   color: #009688; font-weight: 700; margin-right: 8px;
 }
 .urgent-msg-box .msg {
-  color: #222; font-weight: 500;
+  color: #222; font-weight: 600;
 }
 .urgent-msg-box .meta {
   color: #039be5; font-size: 0.95em; float: right;
@@ -186,7 +243,7 @@ textarea.msg:focus {
   color: #039be5; font-weight: 700; margin-right: 8px; display: block; margin-bottom: 6px;
 }
 .urgent-reply-box .reply {
-  color: #00695c; font-weight: 600;
+  color: #00695c; font-weight: 700;
 }
 .urgent-reply-box .meta {
   color: #039be5; font-size: 0.95em; float: right;
@@ -202,18 +259,18 @@ textarea.msg:focus {
   <div class="date" id="date"></div>
   <div class="time" id="time"></div>
 </div>
-<div class="hotzone" id="hotzone" title="Triple-tap for admin"></div>
+<div class="hotzone" id="hotzone" title="Tap 4 times for admin"></div>
 <div class="wrap">
   <div class="card">
     <div class="line1" id="line1">Principal is In Office</div>
     <div class="position-box" id="positionBox">Principal's Office</div>
     <div class="line3" id="line3">Updated 10:42</div>
     <div class="row">
-      <button class="btn btn-urgent" id="urgentBtn">🚨 Urgent message</button>
-      <button class="btn btn-request" id="requestBtn" style="display:none;">🔔 Request position</button>
+      <button class="btn btn-urgent" id="urgentBtn">🚨 Urgent Message</button>
+      <button class="btn btn-request" id="requestBtn" style="display:none;">🔔 Request</button>
     </div>
     <div class="urgent-msg-box" id="urgentMsgBox" style="display:none;">
-      <span class="label">Your urgent message:</span>
+      <span class="label">Your message:</span>
       <span class="msg" id="urgentMsgText"></span>
       <span class="meta" id="urgentMsgTime"></span>
     </div>
@@ -228,7 +285,7 @@ textarea.msg:focus {
 <!-- Urgent modal -->
 <div class="modal" id="urgentModal" aria-hidden="true">
   <div class="card">
-    <h3 style="margin-top:0;">Send urgent message</h3>
+    <h3 style="margin-top:0;">🚨 Send Urgent Message</h3>
     <div class="tiles" id="reasonTiles">
       <div class="tile active" data-reason="Student emergency">🚑<br>Student</div>
       <div class="tile" data-reason="Parent waiting">👪<br>Parent</div>
@@ -241,8 +298,8 @@ textarea.msg:focus {
       <div class="count" id="msgCount">0 / 200</div>
     </div>
     <div class="actions">
-      <button class="btn btn-secondary" id="cancelUrgent">Cancel</button>
-      <button class="btn btn-urgent" id="sendUrgent">Send</button>
+      <button class="btn btn-secondary" id="cancelUrgent">✖ Cancel</button>
+      <button class="btn btn-urgent" id="sendUrgent">✔ Send</button>
     </div>
   </div>
 </div>
